@@ -15,7 +15,7 @@ struct proc_table{
     struct {
         int pid;
         struct proc* procPtr;
-    } proc_table_map[2][MAX_ACTIVE_PROC]; // 2d array mapping pids to processes
+    } proc_table_map[2][MAX_ACTIVE_PROCS]; // 2d array mapping pids to processes
 
 };
 
