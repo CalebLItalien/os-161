@@ -5,8 +5,6 @@
 
 #define MAX_ACTIVE_PROCS 100
 
-extern struct proc_table *pt;
-
 struct proc_table{
     /*
     Defines a process table, which maps process id's to processes.
