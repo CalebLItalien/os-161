@@ -4,6 +4,7 @@
 #include <synch.h>
 #include <proc.h>
 #include <kern/errno.h>
+#include <spinlock.h>
 
 #define MAX_ACTIVE_PROCS 100
 
@@ -15,7 +16,7 @@ void proc_table_create(struct proc_table ** pt){
     if (*pt == NULL) { kprintf("Hey! Where's my process table?"); }
 
     spinlock_init(&((*pt) -> pt_lock));
-    *pt -> active_procs = 0;
+    (*pt) -> active_procs = 0;
 }
 
 void proc_table_destroy(struct proc_table * pt){
@@ -29,8 +30,8 @@ void proc_table_destroy(struct proc_table * pt){
             for (int j = 0; j < MAX_ACTIVE_PROCS; j++){
                 if (pt -> proc_table_map[i][j].procPtr != NULL){ proc_destroy(pt -> proc_table_map[i][j].procPtr); }
             }
+            kfree(pt -> proc_table_map[i]);
         }
-        kfree(pt -> proc_table_map[i]);
     }
     spinlock_cleanup(&pt->pt_lock);
     kfree(pt);
@@ -118,7 +119,7 @@ struct proc * remove_process(struct proc_table *pt, int pid){
     Removes a process from the process table
     */
     KASSERT(pt != NULL);
-    if (!valid_pid(pid)){ return EINVAL; } 
+    if (!valid_pid(pid)){ return NULL; } // we need to replace with proper error code, need to return a pointer.
 
     spinlock_acquire(&pt -> pt_lock); 
 
